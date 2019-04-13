@@ -1,2 +1,2 @@
 # datasciencecoursera
-The Data Scientist's Toolkit week 4 project
+My notes, projects, quizzes, etc. for the data science cert. 
