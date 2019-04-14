@@ -1,2 +1,3 @@
-# datasciencecoursera
-My notes, projects, quizzes, etc. for the data science cert. 
+## Getting And Cleaning Data week 3 final project
+
+

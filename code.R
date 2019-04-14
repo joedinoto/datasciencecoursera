@@ -123,7 +123,6 @@ write.csv(master_bound_filtered_named,"master_bound_filtered_named.csv")
 
 # 5.From the data set in step 4, creates a second, independent tidy data set with the average of 
 # each variable for each activity and each subject.
-# What are the variables, activities, and subjects?
 
 # creates a long tibble
 longtable<- gather(master_bound_filtered_named,"tBodyAcc-std()-X":"fBodyBodyGyroJerkMag-mean()",key="variable",value="observ") %>%
@@ -133,16 +132,18 @@ dim(longtable) #[1] 679734      4
 # separating is useful https://tidyr.tidyverse.org/reference/separate.html
 # splits the long tibble by -std()-xyz or -mean()-xyz
 longtable<- separate(longtable,variable,c("variable","math"),"-",extra="merge")
-
 # splits the long tibble by -xyz
 longtable<- separate(longtable,math,c("math","XYZ"),"-",extra="merge")
 
+# create a separate tibble just for the lengthy variable names
+# and further splitting by f and t
 long_variable<- select(longtable,variable)
 
 # replace f with -f and t with -t in longtable
 longtable2<- gsub("f","f-",longtable$variable)%>% as_tibble()
 longtable2<- gsub("t","t-",longtable2$value)%>% as_tibble()
 setnames(longtable2,old="value",new="variables")
+
 # removes the original variable column from longtable
 longtable <- select(longtable,-variable)
 # binds longtable2 and longtable together as a new tibble
@@ -151,3 +152,10 @@ longtable <- cbind(longtable2,longtable) %>% as_tibble()
 # splits the new long tibble by t and f
 longtable<- separate(longtable,variables,c("time or freqency","variable"),"-",extra="merge")
 dim(longtable) #[1] 679734      6
+
+# longtable is now our tidy data set required in step 5
+# from here we can perform all sorts of analysis 
+
+# write longtable to a .csv for inspection and further analysis
+write.csv(longtable,"longtable.csv")
+write.table(longtable,"longtable.txt",row.name=FALSE)
