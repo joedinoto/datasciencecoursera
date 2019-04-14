@@ -109,6 +109,7 @@ dim(master_bound_filtered) #[1] 10299    66
 # renames the column headers to tbodyacc, tgravityacc...etc.  
 master_bound_filtered_named<- setnames(master_bound_filtered,old=mean_and_std$mean_and_std_vector,new=mean_and_std$V2)
 names(master_bound_filtered_named)
+setnames(master_bound_filtered_named,old="value",new="activity")
 dim(master_bound_filtered_named) #[1] 10299    66 but it should be 10299    68...
 
 # add back the subject and y columns
@@ -125,8 +126,9 @@ write.csv(master_bound_filtered_named,"master_bound_filtered_named.csv")
 # What are the variables, activities, and subjects?
 
 # creates a long tibble
-longtable<- gather(master_bound_filtered_named,"tBodyAcc-std()-X":"fBodyBodyGyroJerkMag-mean()",key="variable",value="value")
-dim(longtable) #[1] 679734      3
+longtable<- gather(master_bound_filtered_named,"tBodyAcc-std()-X":"fBodyBodyGyroJerkMag-mean()",key="variable",value="observ") %>%
+  as_tibble()
+dim(longtable) #[1] 679734      4
 
 # separating is useful https://tidyr.tidyverse.org/reference/separate.html
 # splits the long tibble by -std()-xyz or -mean()-xyz
@@ -141,7 +143,9 @@ long_variable<- select(longtable,variable)
 longtable2<- gsub("f","f-",longtable$variable)%>% as_tibble()
 longtable2<- gsub("t","t-",longtable2$value)%>% as_tibble()
 setnames(longtable2,old="value",new="variables")
+# removes the original variable column from longtable
 longtable <- select(longtable,-variable)
+# binds longtable2 and longtable together as a new tibble
 longtable <- cbind(longtable2,longtable) %>% as_tibble()
 
 # splits the new long tibble by t and f
