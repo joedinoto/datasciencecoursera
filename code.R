@@ -53,15 +53,26 @@ train_bound<- cbind(y_train,X_train) %>%
 master_bound <- rbind(test_bound,train_bound) %>% 
   as_tibble()
 
-# Find features that contain "mean()" but not "meanfreq()"
-mean<- filter(features, grepl("mean\\(",V2))
+# Find features that contain "mean()" and "std()"
+mean <- filter(features, grepl("std\\(",V2))
+std <- filter(features, grepl("mean\\(",V2))
+
+# combine "mean()" and "std()" into a single tibble
+mean_and_std <- rbind(mean,std) %>% as_tibble()
+dim(mean_and_std) #[1] 66  2
 
 # Create a third column in the features table that will be used 
 # to select columns in the master_bound table
 
 # creates third column mean_vector with entries V1, V2, etc.
-mean<- mutate(mean,mean_vector=paste("V",mean$V1,sep="")) 
-# selects only V1, V2, ... V41, V42, etc. that contain "mean()"
-master_bound_filtered<- select(master_bound,mean$mean_vector) 
+mean_and_std <- mutate(mean_and_std,mean_and_std_vector=paste("V",mean_and_std$V1,sep="")) 
+dim(mean_and_std) #[1] 66  3
+
+# selects only V1, V2, ... V41, V42, etc. that contain "mean()" or "std()"
+master_bound_filtered<- select(master_bound,mean_and_std$mean_and_std_vector)
+dim(master_bound_filtered) #[1] 10299    66
+
 # renames the column headers to tbodyacc, tgravityacc...etc.  
-master_bound_filtered_named<- setnames(master_bound_filtered,old=mean$mean_vector,new=mean$V2)
+master_bound_filtered_named<- setnames(master_bound_filtered,old=mean_and_std$mean_and_std_vector,new=mean_and_std$V2)
+names(master_bound_filtered_named)
+dim(master_bound_filtered_named) #[1] 10299    66
