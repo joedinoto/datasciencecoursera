@@ -62,7 +62,13 @@ master_bound <- rbind(test_bound,train_bound) %>%
 
 # Find features that contain "mean()" but not "meanfreq()"
 mean<- filter(features, grepl("mean\\(",V2))
+
 # Create a third column in the features table that will be used 
 # to select columns in the master_bound table
-mean<- mutate(mean,mean_vector=paste("V",mean$V1,sep=""))
-master_bound_filtered<- select(master_bound,mean$mean_vector)
+
+# creates third column mean_vector with entries V1, V2, etc.
+mean<- mutate(mean,mean_vector=paste("V",mean$V1,sep="")) 
+# selects only V1, V2, ... V41, V42, etc. that contain "mean()"
+master_bound_filtered<- select(master_bound,mean$mean_vector) 
+# renames the column headers to tbodyacc, tgravityacc...etc.  
+master_bound_filtered_named<- setnames(master_bound_filtered,old=mean$mean_vector,new=mean$V2)
