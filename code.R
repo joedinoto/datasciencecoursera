@@ -1,4 +1,4 @@
-# Preliminatries downloading data, setting working directory, exploring dimensions of data
+# Preliminaries: downloading data, setting working directory, exploring dimensions of data
 
 # download data
 url<- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
@@ -29,7 +29,7 @@ subject_test <- fread("./test/subject_test.txt",col.names = "subject")
 dim(subject_test)     #[1] 2947    1
 X_test <- fread("./test/X_test.txt")
 dim(X_test)           #[1] 2947  561
-y_test <- fread("./test/y_test.txt",col.names = "y")
+y_test <- fread("./test/y_test.txt",col.names = "activity")
 dim(y_test)           #[1] 2947    1
 
 # /UCI Har Dataset/train
@@ -37,7 +37,7 @@ subject_train <- fread("./train/subject_train.txt",col.names = "subject")
 dim(subject_train)    #[1] 7352    1
 X_train <- fread("./train/X_train.txt")
 dim(X_train)          #[1] 7352  561
-y_train <- fread("./train/y_train.txt",col.names="y")
+y_train <- fread("./train/y_train.txt",col.names="activity")
 dim(y_train)          #[1] 7352    1
 
 
@@ -59,8 +59,26 @@ master_bound <- rbind(test_bound,train_bound) %>%
   as_tibble()
 
 # put away the first 2 columns of master_bound for later
-master_bound_first_two <- select(master_bound,c(subject,y))
+master_bound_first_two <- select(master_bound,c(subject,activity))
 dim(master_bound_first_two)
+
+# replace 1...6 with walking ... laying
+# there's got to be a better way
+master_bound_first_two<- sub(1,"Walking",master_bound_first_two$activity) %>% 
+  sub(2,"WalkingUpStairs",.) %>%
+  sub(3,"WalkingDownstairs",.) %>%
+  sub(4,"Sitting",.) %>%
+  sub(5,"Standing",.) %>%
+  sub(6,"Laying",.) %>% 
+  as_tibble()
+
+# just the first column of master_bound
+master_bound_subject<- select(master_bound,subject)
+
+# binding together the 1st col of master_bound w/descriptive names (walking... laying)
+master_bound_first_two <- cbind(master_bound_subject,master_bound_first_two)
+dim(master_bound_first_two) #[1] 10299     2
+head(master_bound_first_two)
 
 # Find features that contain "mean()" and "std()"
 mean <- filter(features, grepl("std\\(",V2))
@@ -98,5 +116,10 @@ master_bound_filtered_named<- cbind(master_bound_first_two,master_bound_filtered
   as_tibble()
 dim(master_bound_filtered_named) #[1] 10299    68
 
+# write master_bound_filtered_named to .csv for easier exploration
+write.csv(master_bound_filtered_named,"master_bound_filtered_named.csv")
 
-# should be 66 +2 columns!
+
+# 5.From the data set in step 4, creates a second, independent tidy data set with the average of 
+# each variable for each activity and each subject.
+# What are the variables, activities, and subjects?
