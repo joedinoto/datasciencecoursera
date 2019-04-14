@@ -1,3 +1,5 @@
+# Preliminatries downloading data, setting working directory, exploring dimensions of data
+
 # download data
 url<- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 dest <- "data.zip"
@@ -49,13 +51,23 @@ train_bound<- cbind(y_train,X_train) %>%
   cbind(subject_train,.) %>% 
   as_tibble()
 
+# Step 1 of instructions are satisfied
+# 1. Merges the training and the test sets to create one data set.
+
 # bind test & train data into master tibble 10,299 x 563
 master_bound <- rbind(test_bound,train_bound) %>% 
   as_tibble()
 
+# put away the first 2 columns of master_bound for later
+master_bound_first_two <- select(master_bound,c(subject,y))
+dim(master_bound_first_two)
+
 # Find features that contain "mean()" and "std()"
 mean <- filter(features, grepl("std\\(",V2))
 std <- filter(features, grepl("mean\\(",V2))
+
+# Step 2 of the instructions are satisfied
+# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
 
 # combine "mean()" and "std()" into a single tibble
 mean_and_std <- rbind(mean,std) %>% as_tibble()
@@ -72,7 +84,19 @@ dim(mean_and_std) #[1] 66  3
 master_bound_filtered<- select(master_bound,mean_and_std$mean_and_std_vector)
 dim(master_bound_filtered) #[1] 10299    66
 
+# Steps 3 & 4 of the instructions are satisfied
+# 3. Uses descriptive activity names to name the activities in the data set
+# 4. Appropriately labels the data set with descriptive variable names.
+
 # renames the column headers to tbodyacc, tgravityacc...etc.  
 master_bound_filtered_named<- setnames(master_bound_filtered,old=mean_and_std$mean_and_std_vector,new=mean_and_std$V2)
 names(master_bound_filtered_named)
-dim(master_bound_filtered_named) #[1] 10299    66
+dim(master_bound_filtered_named) #[1] 10299    66 but it should be 10299    68...
+
+# add back the subject and y columns
+master_bound_filtered_named<- cbind(master_bound_first_two,master_bound_filtered_named) %>% 
+  as_tibble()
+dim(master_bound_filtered_named) #[1] 10299    68
+
+
+# should be 66 +2 columns!
