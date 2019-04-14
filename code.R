@@ -57,4 +57,12 @@ train_bound<- cbind(y_train,X_train) %>%
   as_tibble()
 
 # bind test & train data into master tibble 10,299 x 563
-master_bound <- rbind(test_bound,train_bound) %>% as_tibble()
+master_bound <- rbind(test_bound,train_bound) %>% 
+  as_tibble()
+
+# Find features that contain "mean()" but not "meanfreq()"
+mean<- filter(features, grepl("mean\\(",V2))
+# Create a third column in the features table that will be used 
+# to select columns in the master_bound table
+mean<- mutate(mean,mean_vector=paste("V",mean$V1,sep=""))
+master_bound_filtered<- select(master_bound,mean$mean_vector)
