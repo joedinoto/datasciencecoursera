@@ -11,7 +11,7 @@ unzip("data.zip")
 # set working directory
 setwd("./UCI Har Dataset")
 
-# set packages
+# set libraries
 # https://www.rstudio.com/resources/cheatsheets/ to learn more
 library(data.table)
 library(dplyr)
