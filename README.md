@@ -6,7 +6,7 @@ Read below for an overview about how the analysis was performed.
 
 ## 0. Download and unzip the .zip into the working directory, set libraries, and explore the dimensions of the files. 
 
-Now the actual assignment can begin.
+First is is code that downloads the data in .zip format, unzips it, sets up relevant libraries that R will use ,then explores the dimension of the files that are unzipped. From there, the actual assignment can begin.
 
 ## 1. Merge the training and the test sets to create one data set. 
 
