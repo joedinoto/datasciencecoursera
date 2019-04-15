@@ -1,6 +1,8 @@
 ## Getting And Cleaning Data week 3 final project
 
 The run_analysis.R script is broken into six sections. 
+See the fully annoted code here: https://github.com/joedinoto/datasciencecoursera/blob/master/run_analysis.R
+Read below for information about how the analysis was performed.
 
 # 0. Download and unzip the .zip into the working directory, set libraries, and explore the dimensions of the files. 
 
